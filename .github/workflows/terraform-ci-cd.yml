@@ -36,9 +36,9 @@ jobs:
         run: terraform -chdir=environnements/dev validate
 
       - name: Setup TFLint
-        uses: terraform-linters/setup-tflint@v3
-        with:
-          tflint_version: ${{ env.TFLINT_VERSION }}
+        run: |
+          curl -s https://raw.githubusercontent.com/terraform-linters/tflint/master/install_linux.sh | bash
+          tflint --version
 
       - name: Run TFLint
         run: tflint -c .tflint.hcl environnements/dev/
