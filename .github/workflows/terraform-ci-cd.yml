@@ -43,6 +43,9 @@ jobs:
           sudo mv tflint /usr/local/bin/
           tflint --version
 
+      - name: Initialize TfLint plugins
+        run: tflint --init
+
       - name: Run TFLint
         run: tflint --chdir=environnements/dev -c .tflint.hcl
 
