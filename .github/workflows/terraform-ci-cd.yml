@@ -23,7 +23,7 @@ jobs:
       - name: Setup Terraform
         uses: hashicorp/setup-terraform@v3
         with:
-          terraform_version: ${{ env.TF_VERSION }}
+          terraform_version: "0.50.0"
 
       - name: Terraform Init
         run: terraform -chdir=environnements/dev init
