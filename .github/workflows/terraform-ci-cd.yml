@@ -37,9 +37,12 @@ jobs:
 
       # ✅ Correction de l'indentation ici (2 espaces de plus)
       - name: Install TFLint
-        run: |
-          curl -s https://raw.githubusercontent.com/terraform-linters/tflint/master/install_linux.sh | bash -s -- -b /usr/local/bin
-          tflint --version
+  run: |
+    curl -LO https://github.com/terraform-linters/tflint/releases/download/v0.51.1/tflint_linux_amd64.zip
+    unzip tflint_linux_amd64.zip
+    chmod +x tflint
+    sudo mv tflint /usr/local/bin/
+    tflint --version
 
       - name: Run TFLint
         run: tflint -c .tflint.hcl environnements/dev/
