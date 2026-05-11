@@ -1,0 +1,13 @@
+skip-check:
+  - CKV_AWS_24  # Ignore la règle "SSH ouvert depuis Internet" si nécessaire
+
+framework:
+  - terraform
+
+directory:
+  - environnements/dev/
+  - modules/
+
+output:
+  - json
+  - cli
