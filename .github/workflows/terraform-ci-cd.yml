@@ -44,7 +44,7 @@ jobs:
           tflint --version
 
       - name: Run TFLint
-        run: tflint -c .tflint.hcl environnements/dev/
+        run: tflint --chdir=environnements/dev -c .tflint.hcl
 
       - name: Setup Checkov
         run: pip install checkov==${{ env.CHECKOV_VERSION }}
