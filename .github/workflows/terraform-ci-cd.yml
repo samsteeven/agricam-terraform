@@ -9,7 +9,7 @@ on:
 env:
   TF_VERSION: "1.7.0"
   CHECKOV_VERSION: "3.2.0"
-  TFLINT_VERSION: "0.50.0"  # Mise à jour vers une version disponible
+  TFLINT_VERSION: "0.51.1"
   GO_VERSION: "1.21"
 
 jobs:
@@ -23,7 +23,7 @@ jobs:
       - name: Setup Terraform
         uses: hashicorp/setup-terraform@v3
         with:
-          terraform_version: "0.50.0"
+          terraform_version: ${{ env.TF_VERSION }}
 
       - name: Terraform Init
         run: terraform -chdir=environnements/dev init
@@ -35,14 +35,13 @@ jobs:
       - name: Terraform Validate
         run: terraform -chdir=environnements/dev validate
 
-      # ✅ Correction de l'indentation ici (2 espaces de plus)
       - name: Install TFLint
-  run: |
-    curl -LO https://github.com/terraform-linters/tflint/releases/download/v0.51.1/tflint_linux_amd64.zip
-    unzip tflint_linux_amd64.zip
-    chmod +x tflint
-    sudo mv tflint /usr/local/bin/
-    tflint --version
+        run: |
+          curl -LO https://github.com/terraform-linters/tflint/releases/download/v${{ env.TFLINT_VERSION }}/tflint_linux_amd64.zip
+          unzip tflint_linux_amd64.zip
+          chmod +x tflint
+          sudo mv tflint /usr/local/bin/
+          tflint --version
 
       - name: Run TFLint
         run: tflint -c .tflint.hcl environnements/dev/
