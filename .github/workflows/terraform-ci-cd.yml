@@ -36,7 +36,7 @@ jobs:
         run: terraform -chdir=environnements/dev validate
 
       - name: Setup TFLint
-        uses: terraform-linters/setup-tflint@v4
+        uses: terraform-linters/setup-tflint@v3
         with:
           tflint_version: ${{ env.TFLINT_VERSION }}
 
