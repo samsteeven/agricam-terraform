@@ -9,7 +9,7 @@ on:
 env:
   TF_VERSION: "1.7.0"
   CHECKOV_VERSION: "3.2.0"
-  TFLINT_VERSION: "0.48.0"
+  TFLINT_VERSION: "0.50.0"  # Mise à jour vers une version disponible
   GO_VERSION: "1.21"
 
 jobs:
@@ -34,10 +34,12 @@ jobs:
 
       - name: Terraform Validate
         run: terraform -chdir=environnements/dev validate
-- name: Install TFLint
-  run: |
-    curl -s https://raw.githubusercontent.com/terraform-linters/tflint/master/install_linux.sh | bash -s -- -b /usr/local/bin
-    tflint --version
+
+      # ✅ Correction de l'indentation ici (2 espaces de plus)
+      - name: Install TFLint
+        run: |
+          curl -s https://raw.githubusercontent.com/terraform-linters/tflint/master/install_linux.sh | bash -s -- -b /usr/local/bin
+          tflint --version
 
       - name: Run TFLint
         run: tflint -c .tflint.hcl environnements/dev/
@@ -47,6 +49,7 @@ jobs:
 
       - name: Run Checkov
         run: checkov -d environnements/dev/ --framework terraform
+
   unit-tests:
     name: Unit Tests (Terratest)
     runs-on: ubuntu-latest
@@ -71,7 +74,6 @@ jobs:
           AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
           AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           AWS_DEFAULT_REGION: ${{ secrets.AWS_DEFAULT_REGION }}
-
 
   terraform-plan:
     name: Terraform Plan
