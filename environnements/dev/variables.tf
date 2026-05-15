@@ -3,7 +3,7 @@
 variable "aws_region" {
   description = "Région AWS où déployer les ressources"
   type        = string
-  default     = "eu-north-1"  # Afrique du Sud (la plus proche du Cameroun)
+  default     = "eu-north-1"  # Stockholm (Suède) - Lieu actuel du bucket S3
 }
 
 variable "environnement" {

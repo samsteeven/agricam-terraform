@@ -8,7 +8,7 @@ terraform {
   backend "s3" {
     bucket         = "agricam-terraform-s3"
     key            = "dev/terraform.tfstate"
-    region         = "af-south-1"
+    region         = "eu-north-1"
     encrypt        = true
     # dynamodb_table = "agricam-terraform-lock" # Décommenter après création de la table
   }
