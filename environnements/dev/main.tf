@@ -6,7 +6,7 @@ terraform {
   required_version = ">= 1.7.0"
 
   backend "s3" {
-    bucket         = "agricam-terraform-state"
+    bucket         = "agricam-terraform-s3"
     key            = "dev/terraform.tfstate"
     region         = "af-south-1"
     encrypt        = true
