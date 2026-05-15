@@ -8,7 +8,7 @@ terraform {
   backend "s3" {
     bucket         = "agricam-terraform-state"
     key            = "dev/terraform.tfstate"
-    region         = "us-east-1"
+    region         = "af-south-1"
     encrypt        = true
     # dynamodb_table = "agricam-terraform-lock" # Décommenter après création de la table
   }
@@ -27,6 +27,22 @@ terraform {
 
 provider "aws" {
   region = var.aws_region
+}
+
+# --- Data Source : Récupérer l'AMI Ubuntu 22.04 la plus récente ---
+data "aws_ami" "ubuntu" {
+  most_recent = true
+  owners      = ["099720109477"] # ID officiel de Canonical
+
+  filter {
+    name   = "name"
+    values = ["ubuntu/images/hvm-ssd/ubuntu-jammy-22.04-amd64-server-*"]
+  }
+
+  filter {
+    name   = "virtualization-type"
+    values = ["hvm"]
+  }
 }
 
 # --- Ressource 1 : VPC (Réseau privé virtuel) ---
@@ -138,7 +154,7 @@ resource "aws_security_group" "agricam_sg" {
 
 # --- Ressource 7 : Instance EC2 (Serveur) ---
 resource "aws_instance" "agricam_serveur" {
-  ami           = var.ami_id
+  ami           = data.aws_ami.ubuntu.id
   instance_type = var.type_instance
   subnet_id     = aws_subnet.agricam_subnet.id
   vpc_security_group_ids = [aws_security_group.agricam_sg.id]

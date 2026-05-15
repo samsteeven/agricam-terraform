@@ -3,7 +3,7 @@
 variable "aws_region" {
   description = "Région AWS où déployer les ressources"
   type        = string
-  default     = "af-south-1"  # Afrique du Sud (la plus proche du Cameroun)
+  default     = "eu-north-1"  # Afrique du Sud (la plus proche du Cameroun)
 }
 
 variable "environnement" {
