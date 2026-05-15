@@ -46,9 +46,9 @@ jobs:
       - name: Install TFLint AWS plugin
         run: |
           mkdir -p ~/.tflint.d/plugins
-          curl -LO https://github.com/terraform-linters/tflint-plugin-aws/releases/latest/download/tflint-plugin-aws_linux_amd64.zip
-          unzip tflint-plugin-aws_linux_amd64.zip -d ~/.tflint.d/plugins/
-          chmod +x ~/.tflint.d/plugins/tflint-plugin-aws
+          curl -L -o tflint-plugin-aws.zip https://github.com/terraform-linters/tflint-ruleset-aws/releases/download/v0.47.0/tflint-ruleset-aws_linux_amd64.zip
+          unzip tflint-plugin-aws.zip -d ~/.tflint.d/plugins/
+          chmod +x ~/.tflint.d/plugins/tflint-ruleset-aws
 
       - name: Initialize TfLint plugins
         run: tflint --init
