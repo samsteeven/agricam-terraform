@@ -3,10 +3,24 @@
 
 # --- Déclaration du fournisseur AWS ---
 terraform {
+  required_version = ">= 1.7.0"
+
+  backend "s3" {
+    bucket         = "agricam-terraform-state"
+    key            = "dev/terraform.tfstate"
+    region         = "us-east-1"
+    encrypt        = true
+    # dynamodb_table = "agricam-terraform-lock" # Décommenter après création de la table
+  }
+
   required_providers {
     aws = {
       source  = "hashicorp/aws"
       version = "~> 5.0"
+    }
+    random = {
+      source  = "hashicorp/random"
+      version = "~> 3.0"
     }
   }
 }
@@ -24,6 +38,7 @@ resource "aws_vpc" "agricam_vpc" {
     Projet      = "AgriCam"
     Entreprise  = "CamTech Solutions"
     Environnement = var.environnement
+    Propriétaire  = "CamTech Solutions"
   }
 }
 
@@ -35,7 +50,11 @@ resource "aws_subnet" "agricam_subnet" {
   map_public_ip_on_launch = true
 
   tags = {
-    Name = "agricam-subnet-${var.environnement}"
+    Name          = "agricam-subnet-${var.environnement}"
+    Projet        = "AgriCam"
+    Environnement = var.environnement
+    Entreprise    = "CamTech Solutions"
+    Propriétaire  = "CamTech Solutions"
   }
 }
 
@@ -44,7 +63,11 @@ resource "aws_internet_gateway" "agricam_igw" {
   vpc_id = aws_vpc.agricam_vpc.id
 
   tags = {
-    Name = "agricam-igw-${var.environnement}"
+    Name          = "agricam-igw-${var.environnement}"
+    Projet        = "AgriCam"
+    Environnement = var.environnement
+    Entreprise    = "CamTech Solutions"
+    Propriétaire  = "CamTech Solutions"
   }
 }
 
@@ -58,7 +81,11 @@ resource "aws_route_table" "agricam_route_table" {
   }
 
   tags = {
-    Name = "agricam-route-table-${var.environnement}"
+    Name          = "agricam-route-table-${var.environnement}"
+    Projet        = "AgriCam"
+    Environnement = var.environnement
+    Entreprise    = "CamTech Solutions"
+    Propriétaire  = "CamTech Solutions"
   }
 }
 
@@ -101,7 +128,11 @@ resource "aws_security_group" "agricam_sg" {
   }
 
   tags = {
-    Name = "agricam-sg-${var.environnement}"
+    Name          = "agricam-sg-${var.environnement}"
+    Projet        = "AgriCam"
+    Environnement = var.environnement
+    Entreprise    = "CamTech Solutions"
+    Propriétaire  = "CamTech Solutions"
   }
 }
 
@@ -113,9 +144,11 @@ resource "aws_instance" "agricam_serveur" {
   vpc_security_group_ids = [aws_security_group.agricam_sg.id]
 
   tags = {
-    Name         = "agricam-serveur-${var.environnement}"
-    Projet       = "AgriCam"
+    Name          = "agricam-serveur-${var.environnement}"
+    Projet        = "AgriCam"
     Environnement = var.environnement
+    Entreprise    = "CamTech Solutions"
+    Propriétaire  = "CamTech Solutions"
   }
 }
 
@@ -124,8 +157,11 @@ resource "aws_s3_bucket" "agricam_stockage" {
   bucket = "agricam-${var.environnement}-stockage-camtech-${random_id.bucket_suffix.hex}"
 
   tags = {
-    Name         = "agricam-stockage-${var.environnement}"
+    Name          = "agricam-stockage-${var.environnement}"
+    Projet        = "AgriCam"
     Environnement = var.environnement
+    Entreprise    = "CamTech Solutions"
+    Propriétaire  = "CamTech Solutions"
   }
 }
 
