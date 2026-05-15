@@ -9,7 +9,7 @@ on:
 env:
   TF_VERSION: "1.7.0"
   CHECKOV_VERSION: "3.2.0"
-  TFLINT_VERSION: "0.51.1"
+  TFLINT_VERSION: "0.52.0"
   GO_VERSION: "1.21"
 
 jobs:
@@ -24,6 +24,7 @@ jobs:
         uses: hashicorp/setup-terraform@v3
         with:
           terraform_version: ${{ env.TF_VERSION }}
+          terraform_wrapper: true
 
       - name: Terraform Init
         run: terraform -chdir=environnements/dev init
@@ -35,26 +36,16 @@ jobs:
       - name: Terraform Validate
         run: terraform -chdir=environnements/dev validate
 
-      - name: Install TFLint
-        run: |
-          curl -LO https://github.com/terraform-linters/tflint/releases/download/v${{ env.TFLINT_VERSION }}/tflint_linux_amd64.zip
-          unzip tflint_linux_amd64.zip
-          chmod +x tflint
-          sudo mv tflint /usr/local/bin/
-          tflint --version
+      - name: Setup TFLint
+        uses: terraform-linters/setup-tflint@v3
+        with:
+          tflint_version: ${{ env.TFLINT_VERSION }}
 
-      - name: Install TFLint AWS plugin
-        run: |
-          mkdir -p ~/.tflint.d/plugins
-          curl -L -o tflint-plugin-aws.zip https://github.com/terraform-linters/tflint-ruleset-aws/releases/download/v0.47.0/tflint-ruleset-aws_linux_amd64.zip
-          unzip tflint-plugin-aws.zip -d ~/.tflint.d/plugins/
-          chmod +x ~/.tflint.d/plugins/tflint-ruleset-aws
-
-      - name: Initialize TfLint plugins
-        run: tflint --init
+      - name: Initialize TFLint
+        run: tflint --init --chdir=environnements/dev
 
       - name: Run TFLint
-        run: tflint --chdir=environnements/dev -c .tflint.hcl
+        run: tflint --chdir=environnements/dev --config=.tflint.hcl
 
       - name: Setup Checkov
         run: pip install checkov==${{ env.CHECKOV_VERSION }}
@@ -76,12 +67,16 @@ jobs:
           go-version: ${{ env.GO_VERSION }}
 
       - name: Install Terratest dependencies
-        run: go mod download
-        working-directory: tests/
+        run: |
+          if [ ! -f go.mod ]; then
+            go mod init agricam-tests
+          fi
+          go mod tidy
+        working-directory: environnements/tests/
 
       - name: Run Terratest
-        run: go test -v ./tests/...
-        working-directory: tests/
+        run: go test -v .
+        working-directory: environnements/tests/
         env:
           AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
           AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
@@ -114,21 +109,40 @@ jobs:
           AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           AWS_DEFAULT_REGION: ${{ secrets.AWS_DEFAULT_REGION }}
 
+      - name: Upload Plan Artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: tfplan
+          path: environnements/dev/tfplan
+
   deploy:
     name: Terraform Apply
     runs-on: ubuntu-latest
     needs: terraform-plan
-    if: github.ref == 'refs/heads/main'
+    if: github.ref == 'refs/heads/master'
     environment:
       name: production
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
 
+      - name: Download Plan Artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: tfplan
+          path: environnements/dev/
+
       - name: Setup Terraform
         uses: hashicorp/setup-terraform@v3
         with:
           terraform_version: ${{ env.TF_VERSION }}
+
+      - name: Terraform Init
+        run: terraform -chdir=environnements/dev init
+        env:
+          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          AWS_DEFAULT_REGION: ${{ secrets.AWS_DEFAULT_REGION }}
 
       - name: Terraform Apply
         run: terraform -chdir=environnements/dev apply -auto-approve tfplan
