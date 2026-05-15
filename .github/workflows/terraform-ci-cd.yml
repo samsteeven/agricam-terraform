@@ -2,14 +2,14 @@ name: Terraform CI/CD Pipeline
 
 on:
   push:
-    branches: [ master, dev ]
+    branches: [master, dev]
   pull_request:
-    branches: [ master ]
+    branches: [master]
 
 env:
   TF_VERSION: "1.7.0"
   CHECKOV_VERSION: "3.2.0"
-  TFLINT_VERSION: "0.52.0"
+  TFLINT_VERSION: "v0.52.0"
   GO_VERSION: "1.21"
 
 jobs:
@@ -37,9 +37,10 @@ jobs:
         run: terraform -chdir=environnements/dev validate
 
       - name: Setup TFLint
-        uses: terraform-linters/setup-tflint@v3
+        uses: terraform-linters/setup-tflint@v4
         with:
           tflint_version: ${{ env.TFLINT_VERSION }}
+          cache: true
 
       - name: Initialize TFLint
         run: tflint --init --chdir=environnements/dev
