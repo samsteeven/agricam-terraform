@@ -43,6 +43,13 @@ jobs:
           sudo mv tflint /usr/local/bin/
           tflint --version
 
+      - name: Install TFLint AWS plugin
+        run: |
+          mkdir -p ~/.tflint.d/plugins
+          curl -LO https://github.com/terraform-linters/tflint-plugin-aws/releases/latest/download/tflint-plugin-aws_linux_amd64.zip
+          unzip tflint-plugin-aws_linux_amd64.zip -d ~/.tflint.d/plugins/
+          chmod +x ~/.tflint.d/plugins/tflint-plugin-aws
+
       - name: Initialize TfLint plugins
         run: tflint --init
 
