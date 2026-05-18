@@ -10,10 +10,10 @@ func TestTerraformAgriCam(t *testing.T) {
 	t.Parallel()
 
 	terraformOptions := &terraform.Options{
-		TerraformDir: "../environnements/dev",
+		TerraformDir: "../dev",
 		Vars: map[string]interface{}{
 			"environnement": "test",
-			"type_instance": "t2.micro",
+			"type_instance": "t3.micro",
 		},
 	}
 
