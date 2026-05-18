@@ -67,6 +67,12 @@ jobs:
         with:
           go-version: ${{ env.GO_VERSION }}
 
+      - name: Setup Terraform
+        uses: hashicorp/setup-terraform@v3
+        with:
+          terraform_version: ${{ env.TF_VERSION }}
+          terraform_wrapper: false
+
       - name: Install Terratest dependencies
         run: |
           if [ ! -f go.mod ]; then
