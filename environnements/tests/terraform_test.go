@@ -15,6 +15,7 @@ func TestTerraformAgriCam(t *testing.T) {
 		Vars: map[string]interface{}{
 			"environnement": "test",
 			"type_instance": "t3.micro",
+			"ip_admin":      "0.0.0.0/0",
 		},
 	}
 
