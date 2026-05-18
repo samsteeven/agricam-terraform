@@ -3,7 +3,7 @@
 variable "aws_region" {
   description = "Région AWS où déployer les ressources"
   type        = string
-  default     = "eu-north-1"  # Stockholm (Suède) - Lieu actuel du bucket S3
+  default     = "us-east-1"  # Virginie du Nord (région offrant la meilleure compatibilité Free Tier)
 }
 
 variable "environnement" {
@@ -14,7 +14,7 @@ variable "environnement" {
 variable "type_instance" {
   description = "Type d'instance EC2 (taille de la machine virtuelle)"
   type        = string
-  default     = "t2.micro"  # Gratuite dans le Free Tier AWS
+  default     = "t2.micro"  # Gratuite dans le Free Tier AWS (t2.micro en us-east-1)
 }
 
 

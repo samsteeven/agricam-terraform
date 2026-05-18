@@ -14,7 +14,7 @@ func TestTerraformAgriCam(t *testing.T) {
 		TerraformDir: "../dev",
 		Vars: map[string]interface{}{
 			"environnement": "test",
-			"type_instance": "t3.micro",
+			"type_instance": "t2.micro",
 			"ip_admin":      "0.0.0.0/0",
 		},
 	}
